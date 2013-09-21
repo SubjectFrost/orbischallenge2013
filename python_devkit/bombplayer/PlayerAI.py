@@ -18,6 +18,7 @@ class PlayerAI():
 			end: a tuple that represents the coordinates of the end postion
 		'''
 		return (abs(start[0]-end[0])+abs(start[1]-end[1]))
+
 	
 	def __init__(self):
 		self.blocks = []
@@ -123,8 +124,13 @@ class PlayerAI():
 					stderr.write("There is a bomb at " + str(bomb) + " which is ")
 					stderr.write(str(dst))
 					stderr.write(" away\n")
-					if dst >= bombs[bomb]['range']:
-						validmoves.append(cmove)
+					if bomb[0] == x:
+						if abs(bomb[1] - y) <= bombs[bomb]['range']:
+							break
+					if bomb[1] == y:
+						if abs(bomb[0] - x) <= bombs[bomb]['range']:
+							break
+					validmoves.append(cmove)
 			elif (x, y) in self.blocks: 
 				neighbour_blocks.append((x, y))
 
@@ -141,7 +147,7 @@ class PlayerAI():
 			return Directions['still'].action
 
 		self.move = validmoves[random.randrange(0, len(validmoves))]
-		stderr.write("Chose move " + str(self.move) + "\n\n")
+		stderr.write("Chose move " + str(self.move) + "\n")
 		
 		# place a bomb if there are blocks that can be destroyed
 		if len(neighbour_blocks) > 0:
