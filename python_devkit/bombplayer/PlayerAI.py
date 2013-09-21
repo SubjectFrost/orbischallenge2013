@@ -117,7 +117,9 @@ class PlayerAI():
 			return Directions['still'].action
 
 		# can move somewhere, so choose a tile randomly
+		stderr.write("Valid moves are " + str([str(a) for a in validmoves]) + "\n")
 		move = validmoves[random.randrange(0, len(validmoves))]
+		stderr.write("Chose move " + str(move) + "\n")
 
 		if bombMove: 
 			return move.bombaction
