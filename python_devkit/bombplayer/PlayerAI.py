@@ -119,18 +119,24 @@ class PlayerAI():
 				# walkable is a list in enums.py which indicates what type of tiles are walkable
 				if not len(bombs):
 					validmoves.append(cmove)
-				for bomb in bombs:
-					dst = self.manhattan_distance(bomb,my_position)
-					stderr.write("There is a bomb at " + str(bomb) + " which is ")
-					stderr.write(str(dst))
-					stderr.write(" away\n")
-					if bomb[0] == x:
-						if abs(bomb[1] - y) <= bombs[bomb]['range']:
-							break
-					if bomb[1] == y:
-						if abs(bomb[0] - x) <= bombs[bomb]['range']:
-							break
-					validmoves.append(cmove)
+				else:
+					bad = False
+					for bomb in bombs:
+						dst = self.manhattan_distance(bomb,my_position)
+						stderr.write("There is a bomb at " + str(bomb) + " which is ")
+						stderr.write(str(dst))
+						stderr.write(" away\n")
+						# check if within range of a bomb
+						if bomb[0] == x:
+							if abs(bomb[1] - y) <= bombs[bomb]['range']:
+								bad = True
+								break
+						if bomb[1] == y:
+							if abs(bomb[0] - x) <= bombs[bomb]['range']:
+								bad = True
+								break
+					if not bad:
+						validmoves.append(cmove)
 			elif (x, y) in self.blocks: 
 				neighbour_blocks.append((x, y))
 
