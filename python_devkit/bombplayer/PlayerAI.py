@@ -11,6 +11,7 @@ class PlayerAI():
 	def __init__(self):
 		self.blocks = []
 		self.move = None
+		self.bombMove = False
 
 	def new_game(self, map_list, blocks_list, bombers, player_index):
 		'''
@@ -86,9 +87,8 @@ class PlayerAI():
 			move_number: the current turn number. Use to deterimine if you have missed turns. 
 		'''
 
-		bombMove = False
 		my_position = bombers[player_index]['position']
-
+	
 		# updating the list of blocks
 		for explosion in explosion_list:
 			if explosion in self.blocks: 
@@ -105,28 +105,35 @@ class PlayerAI():
 			# Checks to see if neighbours are walkable, and stores the neighbours which are blocks
 			if map_list[x][y] in WALKABLE:
 				# walkable is a list in enums.py which indicates what type of tiles are walkable
+#				if not self.bombMove or cmove != self.move:
+				for bomb in bombs:
+					print manhattan_distance(bomb,my_position)
+#					if manhattan_distance(bomb,my_position) > bombs[bomb]['range']: 
 				validmoves.append(cmove)
 			elif (x, y) in self.blocks: 
 				neighbour_blocks.append((x, y))
 
-		# place a bomb if there are blocks that can be destroyed
-#		if len(neighbour_blocks) > 0:
-#			bombMove = True
-
-		# there's no where to move to
-		if len(validmoves) == 0: 
-			return Directions['still'].action
 
 		# can move somewhere, so choose a tile randomly
 		if self.move:
 			stderr.write("Previous move was " + str(self.move) + "\n")
+			stderr.write("Previous move placed a bomb " + str(self.bombMove) + "\n")
 		stderr.write("Valid moves are " + str([str(a) for a in validmoves]) + "\n")
+
+		# there's no where to move to
+		if len(validmoves) == 0: 
+			stderr.write("Chose move still\n\n")
+			return Directions['still'].action
+
 		self.move = validmoves[random.randrange(0, len(validmoves))]
 		stderr.write("Chose move " + str(self.move) + "\n\n")
+		
+		# place a bomb if there are blocks that can be destroyed
+		if len(neighbour_blocks) > 0:
+			self.bombMove = True
 
-		if bombMove: 
+		if self.bombMove: 
 			return self.move.bombaction
-#			return self.move.action
 		else: 
 			return self.move.action
 
