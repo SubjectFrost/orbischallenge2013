@@ -10,6 +10,7 @@ class PlayerAI():
 
 	def __init__(self):
 		self.blocks = []
+		self.move = None
 
 	def new_game(self, map_list, blocks_list, bombers, player_index):
 		'''
@@ -97,35 +98,37 @@ class PlayerAI():
 		neighbour_blocks = [] 
 
 		# find out which directions Bomber can move to.
-		for move in Directions.values():
-			x = my_position[0] + move.dx
-			y = my_position[1] + move.dy
+		for cmove in Directions.values():
+			x = my_position[0] + cmove.dx
+			y = my_position[1] + cmove.dy
 
 			# Checks to see if neighbours are walkable, and stores the neighbours which are blocks
 			if map_list[x][y] in WALKABLE:
 				# walkable is a list in enums.py which indicates what type of tiles are walkable
-				validmoves.append(move)
+				validmoves.append(cmove)
 			elif (x, y) in self.blocks: 
 				neighbour_blocks.append((x, y))
 
 		# place a bomb if there are blocks that can be destroyed
-		if len(neighbour_blocks) > 0:
-			bombMove = True
+#		if len(neighbour_blocks) > 0:
+#			bombMove = True
 
 		# there's no where to move to
 		if len(validmoves) == 0: 
 			return Directions['still'].action
 
 		# can move somewhere, so choose a tile randomly
+		if self.move:
+			stderr.write("Previous move was " + str(self.move) + "\n")
 		stderr.write("Valid moves are " + str([str(a) for a in validmoves]) + "\n")
-		move = validmoves[random.randrange(0, len(validmoves))]
-		stderr.write("Chose move " + str(move) + "\n\n")
+		self.move = validmoves[random.randrange(0, len(validmoves))]
+		stderr.write("Chose move " + str(self.move) + "\n\n")
 
 		if bombMove: 
-			return move.bombaction
-#			return move.action
+			return self.move.bombaction
+#			return self.move.action
 		else: 
-			return move.action
+			return self.move.action
 
 	def path_exists(start, end, map_list):
 		''' 
