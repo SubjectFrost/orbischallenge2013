@@ -9,7 +9,7 @@ from Direction import *
 class PlayerAI():
 
 	
-	def manhattan_distance(start, end):
+	def manhattan_distance(self, start, end):
 		'''
 		Returns the Manhattan distance between two points. 
 
@@ -116,12 +116,15 @@ class PlayerAI():
 			# Checks to see if neighbours are walkable, and stores the neighbours which are blocks
 			if map_list[x][y] in WALKABLE:
 				# walkable is a list in enums.py which indicates what type of tiles are walkable
+				if not len(bombs):
+					validmoves.append(cmove)
 				for bomb in bombs:
+					dst = self.manhattan_distance(bomb,my_position)
 					stderr.write("There is a bomb at " + str(bomb) + " which is ")
-					stderr.write(str(manhattan_distance(bomb[0],bomb[1],my_position[0],my_position[1])) + " away\n")
-#					print manhattan_distance(bomb,my_position)
-#					if manhattan_distance(bomb,my_position) > bombs[bomb]['range']: 
-				validmoves.append(cmove)
+					stderr.write(str(dst))
+					stderr.write(" away\n")
+					if dst >= bombs[bomb]['range']:
+						validmoves.append(cmove)
 			elif (x, y) in self.blocks: 
 				neighbour_blocks.append((x, y))
 
