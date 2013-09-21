@@ -1,6 +1,7 @@
 #Player.py ai
 import random
 
+from sys import stderr
 from bombmanclient.Client import *
 from Enums import *
 from Direction import *
@@ -120,6 +121,7 @@ class PlayerAI():
 
 		if bombMove: 
 			return move.bombaction
+#			return move.action
 		else: 
 			return move.action
 
