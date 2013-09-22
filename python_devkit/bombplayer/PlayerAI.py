@@ -46,7 +46,7 @@ class PlayerAI():
 			return -100000
 		t=0
 		if len(bombs):
-			t += BDIST*1.0/min(self.manhattan_distance(pos,bomb) for bomb in bombs)
+			t += BDIST*1.0/min(self.manhattan_distance(pos,bomb)-BTIME*bombs[bomb]['time_left'] for bomb in bombs)
 		if len(self.blocks):
 			t += BLDIST*1.0/min(self.manhattan_distance(pos,block) for block in self.blocks)
 		if len(powerups):
