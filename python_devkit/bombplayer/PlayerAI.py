@@ -53,17 +53,28 @@ class PlayerAI():
 #		  if get_explode_time(bomb) == 1:
 		    
 	
-	def is_deadend(self, pos, map_list):
+	def is_deadend(self, pos, direc, map_list):
 		t = sum(a in WALKABLE for a in (map_list[pos[0]][pos[1] + 1],
 		map_list[pos[0] + 1][pos[1]],
 		map_list[pos[0] - 1][pos[1]],
 		map_list[pos[0]][pos[1] - 1]))
-		return t<=1
+		next_pos = map(sum, zip(pos, direc))
+		ret_val = (t <= 1)
+		if ret_val and (map_list[next_pos[0]][next_pos[1]] in WALKABLE):
+			return self.is_deadend(next_pos, direc, map_list)
+		return ret_val
+	
+	#helper function to make all elements of a tuple negative
+	def neg_tuple(self, x):
+		return -1*x
 
 	def get_value(self, pos, oldpos, map_list, bombs, powerups, other_index, bombMove):
 		if bombMove and pos == oldpos:
 			return BSTAY
-		t=bombMove * DEAD * self.is_deadend(pos, map_list)
+		if bombMove:
+			t=bombMove * DEAD * self.is_deadend(pos, map(sum, zip(pos, map(self.neg_tuple,oldpos))), map_list)
+		else:
+			t = 0
 #		if len(bombs):
 		a = [max(0.0001,self.manhattan_distance(pos,bomb)*max(1,bombs[bomb]['range']*BMULT*(pos[0]!=bomb[0] and pos[1]!=bomb[1]))+BTIME*(15-self.get_explode_time(bomb,bombs))+BRANGE*bombs[bomb]['range']) for bomb in bombs if self.path_exists(pos,bomb,map_list)]
 		if len(a):
