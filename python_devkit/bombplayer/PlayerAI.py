@@ -22,6 +22,7 @@ class PlayerAI():
 	def get_explode_time(self,bomb,bombs):
 		# check if there are any bombs close by
 		# bomb is tuple, a key of bombs
+#		return bombs[bomb]['time_left']
 		rnge = bombs[bomb]['range']
 		bombs_new = bombs.copy()
 		bombs_new.pop(bomb)
@@ -137,10 +138,11 @@ class PlayerAI():
 				exploding = False
 				# don't walk into explosions!
 				for explosion in explosion_list:
-					if (x == explosion[0] and y == explosion[1]):
+					if (x,y) == explosion:
 						exploding = True
 						break
-				
+				if exploding:
+					continue
 				if not len(bombs):
 					validmoves.append(cmove)
 				else:
@@ -163,7 +165,7 @@ class PlayerAI():
 							danger = True
 						else:
 							danger = False
-					if not (bad or exploding):
+					if not bad:
 						validmoves.append(cmove)
 			elif (x, y) in self.blocks: 
 				neighbour_blocks.append((x, y))
