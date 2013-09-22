@@ -69,7 +69,7 @@ class PlayerAI():
 	def neg_tuple(self, x):
 		return -1*x
 
-	def get_value(self, pos, oldpos, map_list, bombs, powerups, other_index, bomb_range, bombMove):
+	def get_value(self, pos, oldpos, map_list, bombs, powerups, bomb_range, bombMove):
 		if bombMove and pos == oldpos:
 			return BSTAY
 		if bombMove:
@@ -262,7 +262,7 @@ class PlayerAI():
 			self.bombMove = False
 		else:   # place a bomb if there are blocks that can be destroyed
 			self.bombMove = len(neighbour_blocks) > 0
-		self.move = max((self.get_value(a[1],my_position, map_list,bombs,powerups,not player_index, bombers[player_index]['bomb_range'], self.bombMove),a[0]) for a in validmoves)[1]
+		self.move = max((self.get_value(a[1],my_position, map_list,bombs,powerups, bombers[player_index]['bomb_range'], self.bombMove),a[0]) for a in validmoves)[1]
 			
 		if self.bombMove and (not danger): 
 			return self.move.bombaction
