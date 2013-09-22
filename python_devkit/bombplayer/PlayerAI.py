@@ -53,26 +53,26 @@ class PlayerAI():
 #		  if get_explode_time(bomb) == 1:
 		    
 	
-	def is_deadend(self, pos, direc, map_list):
+	def is_deadend(self, pos, direc, map_list, bomb_range):
 		t = sum(a in WALKABLE for a in (map_list[pos[0]][pos[1] + 1],
 		map_list[pos[0] + 1][pos[1]],
 		map_list[pos[0] - 1][pos[1]],
 		map_list[pos[0]][pos[1] - 1]))
 		next_pos = map(sum, zip(pos, direc))
 		ret_val = (t <= 1)
-		if ret_val and (map_list[next_pos[0]][next_pos[1]] in WALKABLE):
-			return self.is_deadend(next_pos, direc, map_list)
+		if ret_val and (bomb_range - 1) and (map_list[next_pos[0]][next_pos[1]] in WALKABLE):
+			return self.is_deadend(next_pos, direc, map_list, (bomb_range - 1))
 		return ret_val
 	
 	#helper function to make all elements of a tuple negative
 	def neg_tuple(self, x):
 		return -1*x
 
-	def get_value(self, pos, oldpos, map_list, bombs, powerups, other_index, bombMove):
+	def get_value(self, pos, oldpos, map_list, bombs, powerups, other_index, bomb_range, bombMove):
 		if bombMove and pos == oldpos:
 			return BSTAY
 		if bombMove:
-			t=bombMove * DEAD * self.is_deadend(pos, map(sum, zip(pos, map(self.neg_tuple,oldpos))), map_list)
+			t=bombMove * DEAD * self.is_deadend(pos, map(sum, zip(pos, map(self.neg_tuple,oldpos))), map_list, bomb_range)
 		else:
 			t = 0
 #		if len(bombs):
@@ -256,7 +256,7 @@ class PlayerAI():
 			self.bombMove = False
 		else:   # place a bomb if there are blocks that can be destroyed
 			self.bombMove = len(neighbour_blocks) > 0
-		self.move = max((self.get_value(a[1],my_position, map_list,bombs,powerups,not player_index, self.bombMove),a[0]) for a in validmoves)[1]
+		self.move = max((self.get_value(a[1],my_position, map_list,bombs,powerups,not player_index, bombers[player_index]['bomb_range'], self.bombMove),a[0]) for a in validmoves)[1]
 			
 		if self.bombMove and (not danger): 
 			return self.move.bombaction
