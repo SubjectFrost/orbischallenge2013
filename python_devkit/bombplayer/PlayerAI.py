@@ -12,7 +12,7 @@ BRANGE=-1 # range of closest bomb penalty
 BTIME=-2 # time left in closest bomb penalty
 ODIST=-3 # opponent closeness penalty
 OMOM=-1 # opponent momentum penalty
-PDIST=2 # powerup bonus
+PDIST=3 # powerup bonus
 TDIST=-2 # trap closeness penalty
 BLDIST=2 # block closeness bonus
 
