@@ -12,7 +12,7 @@ BRANGE=-1 # range of closest bomb penalty
 BTIME=-2 # time left in closest bomb penalty
 ODIST=-3 # opponent closeness penalty
 OMOM=-1 # opponent momentum penalty
-PDIST=2 # powerup trap bonus
+PDIST=2 # powerup bonus
 TDIST=-2 # trap closeness penalty
 BLDIST=2 # block closeness bonus
 
@@ -44,11 +44,14 @@ class PlayerAI():
 	def get_value(self, pos, oldpos, map_list, bombs, powerups, other_index, bombMove):
 		if bombMove and pos == oldpos:
 			return -100000
+		t=0
 		if len(bombs):
-			return BDIST*1.0/min(self.manhattan_distance(pos,bomb) for bomb in bombs)
+			t += BDIST*1.0/min(self.manhattan_distance(pos,bomb) for bomb in bombs)
 		if len(self.blocks):
-			return BLDIST*1.0/min(self.manhattan_distance(pos,block) for block in self.blocks)
-		return 0
+			t += BLDIST*1.0/min(self.manhattan_distance(pos,block) for block in self.blocks)
+		if len(powerups):
+			t += PDIST*1.0/min(self.manhattan_distance(pos,powerup) for powerup in powerups)
+		return t
 	
 	def __init__(self):
 		self.blocks = []
