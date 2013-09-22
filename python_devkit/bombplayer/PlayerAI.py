@@ -135,13 +135,14 @@ class PlayerAI():
 			# Checks to see if neighbours are walkable, and stores the neighbours which are blocks
 			if map_list[x][y] in WALKABLE:
 				# walkable is a list in enums.py which indicates what type of tiles are walkable
-				exploding = False
+#				exploding = False
 				# don't walk into explosions!
-				for explosion in explosion_list:
-					if (x,y) == explosion:
-						exploding = True
-						break
-				if exploding:
+#				for explosion in explosion_list:
+#					if (x,y) == explosion:
+#						exploding = True
+#						break
+#				if exploding:
+				if (x,y) in explosion_list:
 					continue
 				if not len(bombs):
 					validmoves.append(cmove)
