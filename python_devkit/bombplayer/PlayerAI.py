@@ -9,7 +9,7 @@ from Direction import *
 # constants for objective function
 BDIST=-4 # closeness to bomb penalty
 BRANGE=-1 # range of closest bomb penalty
-BTIME=-2 # time left in closest bomb penalty
+BTIME=-1 # time left in closest bomb penalty
 ODIST=-3 # opponent closeness penalty
 OMOM=-1 # opponent momentum penalty
 PDIST=3 # powerup bonus
@@ -46,7 +46,7 @@ class PlayerAI():
 			return -100000
 		t=0
 		if len(bombs):
-			t += BDIST*1.0/min(self.manhattan_distance(pos,bomb)-BTIME*bombs[bomb]['time_left']+BRANGE*bombs[bomb]['range'] for bomb in bombs)
+			t += BDIST*1.0/min(max(0.1,self.manhattan_distance(pos,bomb)+BTIME*(15-bombs[bomb]['time_left'])+BRANGE*bombs[bomb]['range']) for bomb in bombs)
 		if len(self.blocks):
 			t += BLDIST*1.0/min(self.manhattan_distance(pos,block) for block in self.blocks)
 		if len(powerups):
@@ -135,7 +135,7 @@ class PlayerAI():
 			
 			move_number: the current turn number. Use to deterimine if you have missed turns. 
 		'''
-
+		stderr.write("\n\n" + str(move_number) + "\n")
 		my_position = bombers[player_index]['position']
 	
 		# updating the list of blocks
