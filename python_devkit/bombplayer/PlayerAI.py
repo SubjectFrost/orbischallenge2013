@@ -170,18 +170,18 @@ class PlayerAI():
 
 
 		# can move somewhere, so choose a tile randomly
-		if self.move:
-			stderr.write("Previous move was " + str(self.move) + "\n")
-			stderr.write("Previous move placed a bomb " + str(self.bombMove) + "\n")
-		stderr.write("Valid moves are " + str([str(a) for a in validmoves]) + "\n")
+#		if self.move:
+#			stderr.write("Previous move was " + str(self.move) + "\n")
+#			stderr.write("Previous move placed a bomb " + str(self.bombMove) + "\n")
+#		stderr.write("Valid moves are " + str([str(a) for a in validmoves]) + "\n")
 
 		# there's no where to move to
 		if len(validmoves) == 0: 
-			stderr.write("Chose move still\n\n")
+#			stderr.write("Chose move still\n\n")
 			return Directions['still'].action
 
 		self.move = validmoves[random.randrange(0, len(validmoves))]
-		stderr.write("Chose move " + str(self.move) + "\n")
+#		stderr.write("Chose move " + str(self.move) + "\n")
 		
 		# if I placed a bomb last move and bomb chaining is off, don't bomb.
 		if (bomb_chain == False) and (self.bombMove == True):
