@@ -22,11 +22,10 @@ class PlayerAI():
 	def get_explode_time(self,bomb,bombs):
 		# check if there are any bombs close by
 		# bomb is tuple, a key of bombs
-		best = bombs[bomb]['time_left']
 		rnge = bombs[bomb]['range']
 		bombs_new = bombs.copy()
 		bombs_new.pop(bomb)
-		t = [best]
+		t = [bombs[bomb]['time_left']]
 		t += [self.get_explode_time((bomb[0]+x,bomb[1]),bombs_new) for x in range(-rnge-1,rnge+1) if bombs_new.has_key((bomb[0]+x,bomb[1]))]
 		t += [self.get_explode_time((bomb[0],bomb[1]+y),bombs_new) for y in range(-rnge-1,rnge+1) if bombs_new.has_key((bomb[0],bomb[1]+y))]
 		return min(t)
@@ -113,9 +112,7 @@ class PlayerAI():
 		my_position = bombers[player_index]['position']
 	
 		# updating the list of blocks
-		for explosion in explosion_list:
-			if explosion in self.blocks: 
-				self.blocks.remove(explosion)
+		[self.blocks.remove(explosion) for explosion in explosion_list if explosion in self.blocks]
 
 		validmoves = []
 		neighbour_blocks = [] 
