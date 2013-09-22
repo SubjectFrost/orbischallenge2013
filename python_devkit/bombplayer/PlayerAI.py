@@ -140,7 +140,7 @@ class PlayerAI():
 			
 			move_number: the current turn number. Use to deterimine if you have missed turns. 
 		'''
-		stderr.write("\n\n" + str(move_number) + "\n")
+#		stderr.write("\n\n" + str(move_number) + "\n")
 		my_position = bombers[player_index]['position']
 	
 		# updating the list of blocks
@@ -213,7 +213,7 @@ class PlayerAI():
 		if len(validmoves) == 0: 
 #			stderr.write("Chose move still\n\n")
 			return Directions['still'].action
-
+		stderr.write(str(move_number) + "\t" + str(player_index) + "\t" + "\t".join(str(a[0]) for a in validmoves) + "\n")
 #	def get_value(self, pos, map_list, bombs, powerups, other_index):
 #		self.move = max((self.get_value(move ),move) for move in validmoves)[1]
 #		self.move = validmoves[random.randrange(0, len(validmoves))]
