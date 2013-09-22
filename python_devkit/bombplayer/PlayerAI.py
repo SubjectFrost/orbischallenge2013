@@ -11,7 +11,7 @@ from Direction import *
 BDIST=-4 # closeness to bomb penalty
 BMULT=10 # multiplier for being in same coord as bomb
 BSTAY=-2 # pentalty for staying in place of bomb
-BRANGE=-0.2 # range of closest bomb penalty
+BRANGE=-2 # range of closest bomb penalty
 BTIME=-0.05 # time left in closest bomb penalty
 ODIST=-3 # opponent closeness penalty
 OMOM=-1 # opponent momentum penalty
@@ -77,7 +77,7 @@ class PlayerAI():
 		else:
 			t = 0
 #		if len(bombs):
-		a = [max(0.0001,self.manhattan_distance(pos,bomb)*max(1,bombs[bomb]['range']*BMULT*(pos[0]!=bomb[0] and pos[1]!=bomb[1]))+BTIME*(15-self.get_explode_time(bomb,bombs))**2+BRANGE*bombs[bomb]['range']) for bomb in bombs if self.path_exists(pos,bomb,map_list)]
+		a = [max(0.0001,self.manhattan_distance(pos,bomb)*3*max(1,bombs[bomb]['range']*BMULT*(pos[0]!=bomb[0] and pos[1]!=bomb[1]))+BTIME*(15-self.get_explode_time(bomb,bombs))**2+BRANGE*bombs[bomb]['range']) for bomb in bombs if self.path_exists(pos,bomb,map_list)]
 		if len(a):
 			t += BDIST*1.0/min(a)
 #		if len(self.blocks):
