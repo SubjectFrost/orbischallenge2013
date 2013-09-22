@@ -6,6 +6,16 @@ from bombmanclient.Client import *
 from Enums import *
 from Direction import *
 
+# constants for objective function
+BDIST=-4
+BRANGE=-1
+BTIME=-2
+ODIST=-3
+OMOM=-1
+PDIST=2
+TDIST=-2
+BLDIST=2
+
 class PlayerAI():
 
 	
@@ -30,6 +40,15 @@ class PlayerAI():
 		t += [self.get_explode_time((bomb[0]+x,bomb[1]),bombs_new) for x in range(-rnge-1,rnge+1) if bombs_new.has_key((bomb[0]+x,bomb[1]))]
 		t += [self.get_explode_time((bomb[0],bomb[1]+y),bombs_new) for y in range(-rnge-1,rnge+1) if bombs_new.has_key((bomb[0],bomb[1]+y))]
 		return min(t)
+
+	def get_value(self, pos, oldpos, map_list, bombs, powerups, other_index, bombMove):
+		if bombMove and pos == oldpos:
+			return -100000
+		if len(bombs):
+			return BDIST*1.0/min(self.manhattan_distance(pos,bomb) for bomb in bombs)
+		if len(self.blocks):
+			return BLDIST*1.0/min(self.manhattan_distance(pos,block) for block in self.blocks)
+		return 0
 	
 	def __init__(self):
 		self.blocks = []
@@ -145,11 +164,13 @@ class PlayerAI():
 				if (x,y) in explosion_list:
 					continue
 				if not len(bombs):
-					validmoves.append(cmove)
+					validmoves.append((cmove,(x,y)))
+#					validmoves.append(cmove)
+#					validmoves.append((self.get_value((x,y),map_list,bombs,powerups,not player_index),cmove))
 				else:
 					bad = False
 					for bomb in bombs:
-						dst = self.manhattan_distance(bomb,my_position)
+#						dst = self.manhattan_distance(bomb,my_position)
 #						stderr.write("There is a bomb at " + str(bomb) + " which is ")
 #						stderr.write(str(dst))
 #						stderr.write(" away and will explode in ")
@@ -163,7 +184,9 @@ class PlayerAI():
 								bad = True
 								break
 					if not bad:
-						validmoves.append(cmove)
+						validmoves((cmove,(c,y)))
+#						validmoves.append((self.get_value((x,y),map_list,bombs,powerups,not player_index),cmove))
+#						validmoves.append(cmove)
 			elif (x, y) in self.blocks: 
 				neighbour_blocks.append((x, y))
 
@@ -179,15 +202,17 @@ class PlayerAI():
 #			stderr.write("Chose move still\n\n")
 			return Directions['still'].action
 
-		self.move = validmoves[random.randrange(0, len(validmoves))]
+#	def get_value(self, pos, map_list, bombs, powerups, other_index):
+#		self.move = max((self.get_value(move ),move) for move in validmoves)[1]
+#		self.move = validmoves[random.randrange(0, len(validmoves))]
 #		stderr.write("Chose move " + str(self.move) + "\n")
 		
 		# if I placed a bomb last move and bomb chaining is off, don't bomb.
 		if (bomb_chain == False) and (self.bombMove == True):
 			self.bombMove = False
 		else:   # place a bomb if there are blocks that can be destroyed
-			if len(neighbour_blocks) > 0 and str(self.move) != "still":
-				self.bombMove = True
+			self.bombMove = len(neighbour_blocks) > 0
+			self.move = max((self.get_value(a[1],my_position, map_list,bombs,powerups,not player_index, self.bombMove),a[0]) for a in validmoves)[1]
 			
 		if self.bombMove and (not danger): 
 			return self.move.bombaction
