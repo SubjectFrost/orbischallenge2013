@@ -156,16 +156,12 @@ class PlayerAI():
 #						stderr.write(str(self.get_explode_time(bomb,bombs)) + "\n")
 #						stderr.write("this is exploding " + str(explosion_list) + "\n")
 						# check if within range of a bomb
-						if (bomb[0] == x) and (abs(bomb[1] - y) <= bombs[bomb]['range']) and (timebomb >= self.get_explode_time(bomb,bombs)):
-							bad = True
-							break
-						if (bomb[1] == y) and (abs(bomb[0] - x) <= bombs[bomb]['range']) and (timebomb >= self.get_explode_time(bomb,bombs)):
-							bad = True
-							break
-						if ((bomb[1] == y) and (abs(bomb[0] - x) <= bombs[bomb]['range'])) or ((bomb[0] == x) and (abs(bomb[1] - y) <= bombs[bomb]['range'])):
+						bombrange = bombs[bomb]['range']
+						if ((bomb[0] == x) and (abs(bomb[1] - y) <= bombrange)) or ((bomb[1] == y) and (abs(bomb[0] - x) <= bombrange)):
 							danger = True
-						else:
-							danger = False
+							if timebomb >= self.get_explode_time(bomb,bombs):
+								bad = True
+								break
 					if not bad:
 						validmoves.append(cmove)
 			elif (x, y) in self.blocks: 
