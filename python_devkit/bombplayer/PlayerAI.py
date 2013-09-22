@@ -8,7 +8,7 @@ from Enums import *
 from Direction import *
 
 # constants for objective function
-BDIST=-3 # closeness to bomb penalty
+BDIST=-4 # closeness to bomb penalty
 BMULT=2 # multiplier for being in same coord as bomb
 BSTAY=-2 # pentalty for staying in place of bomb
 BRANGE=-0.05 # range of closest bomb penalty
