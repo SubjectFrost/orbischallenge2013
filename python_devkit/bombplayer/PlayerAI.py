@@ -53,17 +53,28 @@ class PlayerAI():
 #		  if get_explode_time(bomb) == 1:
 		    
 	
-	def is_deadend(self, pos, map_list):
+	def is_deadend(self, pos, direc, map_list, bomb_range):
 		t = sum(a in WALKABLE for a in (map_list[pos[0]][pos[1] + 1],
 		map_list[pos[0] + 1][pos[1]],
 		map_list[pos[0] - 1][pos[1]],
 		map_list[pos[0]][pos[1] - 1]))
-		return t<=1
+		next_pos = map(sum, zip(pos, direc))
+		ret_val = (t <= 1)
+		if ret_val and (bomb_range - 1) and (map_list[next_pos[0]][next_pos[1]] in WALKABLE):
+			return self.is_deadend(next_pos, direc, map_list, (bomb_range - 1))
+		return ret_val
+	
+	#helper function to make all elements of a tuple negative
+	def neg_tuple(self, x):
+		return -1*x
 
-	def get_value(self, pos, oldpos, map_list, bombs, powerups, other_index, bombMove):
+	def get_value(self, pos, oldpos, map_list, bombs, powerups, other_index, bomb_range, bombMove):
 		if bombMove and pos == oldpos:
 			return BSTAY
-		t=bombMove * DEAD * self.is_deadend(pos, map_list)
+		if bombMove:
+			t=bombMove * DEAD * self.is_deadend(pos, map(sum, zip(pos, map(self.neg_tuple,oldpos))), map_list, bomb_range)
+		else:
+			t = 0
 #		if len(bombs):
 		a = [max(0.0001,self.manhattan_distance(pos,bomb)*max(1,bombs[bomb]['range']*BMULT*(pos[0]!=bomb[0] and pos[1]!=bomb[1]))+BTIME*(15-self.get_explode_time(bomb,bombs))+BRANGE*bombs[bomb]['range']) for bomb in bombs if self.path_exists(pos,bomb,map_list)]
 		if len(a):
@@ -74,6 +85,8 @@ class PlayerAI():
 			a = min(a)
 			if a[1] < a[0] + 1:
 				a = float(a[1]) / 1.4
+			else:
+				a = a[0]
 			t += BLDIST*1.0/a
 #		if len(powerups):
 		a = [(max(0.0001,self.manhattan_distance(pos,powerup)),max(0.0001,self.euc_dist(pos,powerup))) for powerup in powerups if self.path_exists(pos,powerup,map_list)]
@@ -248,7 +261,7 @@ class PlayerAI():
 			self.bombMove = False
 		else:   # place a bomb if there are blocks that can be destroyed
 			self.bombMove = len(neighbour_blocks) > 0
-		self.move = max((self.get_value(a[1],my_position, map_list,bombs,powerups,not player_index, self.bombMove),a[0]) for a in validmoves)[1]
+		self.move = max((self.get_value(a[1],my_position, map_list,bombs,powerups,not player_index, bombers[player_index]['bomb_range'], self.bombMove),a[0]) for a in validmoves)[1]
 			
 		if self.bombMove and (not danger): 
 			return self.move.bombaction
