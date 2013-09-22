@@ -184,7 +184,7 @@ class PlayerAI():
 								bad = True
 								break
 					if not bad:
-						validmoves((cmove,(c,y)))
+						validmoves.append((cmove,(x,y)))
 #						validmoves.append((self.get_value((x,y),map_list,bombs,powerups,not player_index),cmove))
 #						validmoves.append(cmove)
 			elif (x, y) in self.blocks: 
