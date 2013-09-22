@@ -2,6 +2,7 @@
 import random
 
 from sys import stderr
+from math import sqrt
 from bombmanclient.Client import *
 from Enums import *
 from Direction import *
@@ -31,6 +32,9 @@ class PlayerAI():
 			end: a tuple that represents the coordinates of the end postion
 		'''
 		return (abs(start[0]-end[0])+abs(start[1]-end[1]))
+	 
+	def euc_dist(self, start,end):
+		return sqrt(abs(start[0]-end[0])**2 + abs(start[1]-end[1])**2)
 
 	def get_explode_time(self,bomb,bombs):
 		# check if there are any bombs close by
@@ -60,18 +64,23 @@ class PlayerAI():
 		if bombMove and pos == oldpos:
 			return BSTAY
 		t=bombMove * DEAD * self.is_deadend(pos, map_list)
-		if len(bombs):
-			a = [max(0.0001,self.manhattan_distance(pos,bomb)*max(1,bombs[bomb]['range']*BMULT*(pos[0]!=bomb[0] and pos[1]!=bomb[1]))+BTIME*(15-self.get_explode_time(bomb,bombs))+BRANGE*bombs[bomb]['range']) for bomb in bombs if self.path_exists(pos,bomb,map_list)]
-			if len(a):
-				t += BDIST*1.0/min(a)
-		if len(self.blocks):
-			a = [self.manhattan_distance(pos,block) for block in self.blocks]
-			if len(a):
-				t += BLDIST*1.0/min(a)
-		if len(powerups):
-			a = [max(0.0001,self.manhattan_distance(pos,powerup)) for powerup in powerups if self.path_exists(pos,powerup,map_list)]
-			if len(a):
-				t += PDIST*1.0/min(a)
+#		if len(bombs):
+		a = [max(0.0001,self.manhattan_distance(pos,bomb)*max(1,bombs[bomb]['range']*BMULT*(pos[0]!=bomb[0] and pos[1]!=bomb[1]))+BTIME*(15-self.get_explode_time(bomb,bombs))+BRANGE*bombs[bomb]['range']) for bomb in bombs if self.path_exists(pos,bomb,map_list)]
+		if len(a):
+			t += BDIST*1.0/min(a)
+#		if len(self.blocks):
+		a = [self.manhattan_distance(pos,block) for block in self.blocks]
+		if len(a):
+			t += BLDIST*1.0/min(a)
+#		if len(powerups):
+		a = [(max(0.0001,self.manhattan_distance(pos,powerup)),max(0.0001,self.euc_dist(pos,powerup))) for powerup in powerups if self.path_exists(pos,powerup,map_list)]
+		if len(a):
+			a = min(a)
+			if a[1] < a[0] + 1:
+				a = a[1]
+			else:
+				a = a[0]
+			t += PDIST*1.0/a
 		return t
 	
 	def __init__(self):
