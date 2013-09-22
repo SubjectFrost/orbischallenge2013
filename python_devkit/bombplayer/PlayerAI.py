@@ -19,6 +19,7 @@ PDIST=5 # powerup bonus
 TDIST=-2 # trap closeness penalty
 BLDIST=3 # block closeness bonus
 DEAD=-20
+EUC_CORR=1.4
 
 class PlayerAI():
 
@@ -84,7 +85,7 @@ class PlayerAI():
 		if len(a):
 			a = min(a)
 			if a[1] < a[0] + 1:
-				a = float(a[1]) / 1.4
+				a = float(a[1]) / EUC_CORR
 			else:
 				a = a[0]
 			t += BLDIST*1.0/a
@@ -93,7 +94,7 @@ class PlayerAI():
 		if len(a):
 			a = min(a)
 			if a[1] < a[0] + 1:
-				a = float(a[1]) / 1.4
+				a = float(a[1]) / EUC_CORR
 			else:
 				a = a[0]
 			t += PDIST*1.0/a
