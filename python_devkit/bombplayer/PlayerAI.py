@@ -198,7 +198,7 @@ class PlayerAI():
 			if len(neighbour_blocks) > 0 and str(self.move) != "still":
 				self.bombMove = True
 			
-		if self.bombMove and danger: 
+		if self.bombMove and (not danger): 
 			return self.move.bombaction
 		else: 
 			return self.move.action
