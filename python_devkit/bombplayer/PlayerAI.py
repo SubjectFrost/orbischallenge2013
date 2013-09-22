@@ -10,12 +10,13 @@ from Direction import *
 BDIST=-2 # closeness to bomb penalty
 BSTAY=-2 # pentalty for staying in place of bomb
 BRANGE=-1 # range of closest bomb penalty
-BTIME=-0.1 # time left in closest bomb penalty
+BTIME=-0.05 # time left in closest bomb penalty
 ODIST=-3 # opponent closeness penalty
 OMOM=-1 # opponent momentum penalty
 PDIST=10 # powerup bonus
 TDIST=-2 # trap closeness penalty
 BLDIST=4 # block closeness bonus
+DEAD=-20
 
 class PlayerAI():
 
@@ -41,11 +42,18 @@ class PlayerAI():
 		t += [self.get_explode_time((bomb[0]+x,bomb[1]),bombs_new) for x in range(-rnge-1,rnge+1) if bombs_new.has_key((bomb[0]+x,bomb[1]))]
 		t += [self.get_explode_time((bomb[0],bomb[1]+y),bombs_new) for y in range(-rnge-1,rnge+1) if bombs_new.has_key((bomb[0],bomb[1]+y))]
 		return min(t)
+	
+	def is_deadend(self, pos, map_list):
+		t = sum(a in WALKABLE for a in (map_list[pos[0]][pos[1] + 1],
+		map_list[pos[0] + 1)][pos[1]],
+		map_list[pos[0] - 1][pos[1]],
+		map_list[pos[0]][pos[1] - 1]))
+		return t<=1
 
 	def get_value(self, pos, oldpos, map_list, bombs, powerups, other_index, bombMove):
 		if bombMove and pos == oldpos:
 			return BSTAY
-		t=0
+		t=bombMove * DEAD * is_deadend(pos)
 		if len(bombs):
 			t += BDIST*1.0/min(max(0.1,self.manhattan_distance(pos,bomb)+BTIME*(15-self.get_explode_time(bomb,bombs))+BRANGE*bombs[bomb]['range']) for bomb in bombs)
 		if len(self.blocks):
@@ -219,6 +227,8 @@ class PlayerAI():
 			self.move = max((self.get_value(a[1],my_position, map_list,bombs,powerups,not player_index, self.bombMove),a[0]) for a in validmoves)[1]
 			
 		if self.bombMove and (not danger): 
+			if (not (x % 2 or y % 2)): #if x and y are both even
+				my_position[0] my_position[1]
 			return self.move.bombaction
 		else: 
 			return self.move.action
