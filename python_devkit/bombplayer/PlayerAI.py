@@ -150,11 +150,11 @@ class PlayerAI():
 					bad = False
 					for bomb in bombs:
 						dst = self.manhattan_distance(bomb,my_position)
-						stderr.write("There is a bomb at " + str(bomb) + " which is ")
-						stderr.write(str(dst))
-						stderr.write(" away and will explode in ")
-						stderr.write(str(self.get_explode_time(bomb,bombs)) + "\n")
-						stderr.write("this is exploding " + str(explosion_list) + "\n")
+#						stderr.write("There is a bomb at " + str(bomb) + " which is ")
+#						stderr.write(str(dst))
+#						stderr.write(" away and will explode in ")
+#						stderr.write(str(self.get_explode_time(bomb,bombs)) + "\n")
+#						stderr.write("this is exploding " + str(explosion_list) + "\n")
 						# check if within range of a bomb
 						if (bomb[0] == x) and (abs(bomb[1] - y) <= bombs[bomb]['range']) and (timebomb >= self.get_explode_time(bomb,bombs)):
 							bad = True
