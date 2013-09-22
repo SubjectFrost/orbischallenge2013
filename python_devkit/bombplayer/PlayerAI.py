@@ -50,7 +50,11 @@ class PlayerAI():
 		if len(self.blocks):
 			t += BLDIST*1.0/min(self.manhattan_distance(pos,block) for block in self.blocks)
 		if len(powerups):
-			t += PDIST*1.0/min(self.manhattan_distance(pos,powerup) for powerup in powerups)
+			a = min(self.manhattan_distance(pos,powerup) for powerup in powerups)
+			if not a:
+				t += PDIST
+			else:
+				t += PDIST*1.0/a
 		return t
 	
 	def __init__(self):
