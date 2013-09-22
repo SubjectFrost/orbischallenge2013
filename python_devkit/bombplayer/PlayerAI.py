@@ -108,6 +108,9 @@ class PlayerAI():
 
 		validmoves = []
 		neighbour_blocks = [] 
+		
+		#how many moves until we dont want to move near a bomb 
+		timebomb = 2
 
 		# find out which directions Bomber can move to.
 		for cmove in Directions.values():
@@ -127,14 +130,12 @@ class PlayerAI():
 						stderr.write(str(dst))
 						stderr.write(" away\n")
 						# check if within range of a bomb
-						if bomb[0] == x:
-							if abs(bomb[1] - y) <= bombs[bomb]['range']:
-								bad = True
-								break
-						if bomb[1] == y:
-							if abs(bomb[0] - x) <= bombs[bomb]['range']:
-								bad = True
-								break
+						if (bomb[0] == x) and (abs(bomb[1] - y) <= bombs[bomb]['range']) and (timebomb >= bombs[bomb]['time_left']):
+							bad = True
+							break
+						if (bomb[1] == y) and (abs(bomb[0] - x) <= bombs[bomb]['range']) and (timebomb >= bombs[bomb]['time_left']):
+							bad = True
+							break
 					if not bad:
 						validmoves.append(cmove)
 			elif (x, y) in self.blocks: 
@@ -156,7 +157,7 @@ class PlayerAI():
 		stderr.write("Chose move " + str(self.move) + "\n")
 		
 		# place a bomb if there are blocks that can be destroyed
-		if len(neighbour_blocks) > 0:
+		if len(neighbour_blocks) > 0 and str(self.move) != "still":
 			self.bombMove = True
 
 		if self.bombMove: 
@@ -164,7 +165,7 @@ class PlayerAI():
 		else: 
 			return self.move.action
 
-	def path_exists(start, end, map_list):
+	def path_exists(self, start, end, map_list):
 		''' 
 		Takes two tuples that represents the starting, ending point and the currenet map to determine if a path between the two points exists on the map. 
 
