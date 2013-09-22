@@ -19,6 +19,22 @@ class PlayerAI():
 		'''
 		return (abs(start[0]-end[0])+abs(start[1]-end[1]))
 
+	def get_explode_time(self,bomb,bombs):
+		# check if there are any bombs close by
+		# bomb is tuple, a key of bombs
+		best = bombs[bomb]['time_left']
+		rnge = bombs[bomb]['range']
+		bombs_new = bombs.copy()
+		bombs_new.pop(bomb)
+		for x in range(-rnge-1,rnge+1):
+			next = (bomb[0]+x,bomb[1])
+			if bombs_new.has_key(next):
+				best = min(best,self.get_explode_time(next,bombs_new))
+		for y in range(-rnge-1,rnge+1):
+			next = (bomb[0],bomb[1]+y)
+			if bombs_new.has_key(next):
+				best = min(best,self.get_explode_time(next,bombs_new))
+		return best
 	
 	def __init__(self):
 		self.blocks = []
@@ -131,12 +147,13 @@ class PlayerAI():
 						dst = self.manhattan_distance(bomb,my_position)
 						stderr.write("There is a bomb at " + str(bomb) + " which is ")
 						stderr.write(str(dst))
-						stderr.write(" away\n")
+						stderr.write(" away and will explode in ")
+						stderr.write(str(self.get_explode_time(bomb,bombs)) + "\n")
 						# check if within range of a bomb
-						if (bomb[0] == x) and (abs(bomb[1] - y) <= bombs[bomb]['range']) and (timebomb >= bombs[bomb]['time_left']):
+						if (bomb[0] == x) and (abs(bomb[1] - y) <= bombs[bomb]['range']) and (timebomb >= self.get_explode_time(bomb,bombs)):
 							bad = True
 							break
-						if (bomb[1] == y) and (abs(bomb[0] - x) <= bombs[bomb]['range']) and (timebomb >= bombs[bomb]['time_left']):
+						if (bomb[1] == y) and (abs(bomb[0] - x) <= bombs[bomb]['range']) and (timebomb >= self.get_explode_time(bomb,bombs)):
 							bad = True
 							break
 					if not bad:
