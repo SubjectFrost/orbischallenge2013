@@ -111,6 +111,9 @@ class PlayerAI():
 		
 		#how many moves until we dont want to move near a bomb 
 		timebomb = 2
+		
+		#turn making bomb chains on or off. False is off.
+		bomb_chain = False
 
 		# find out which directions Bomber can move to.
 		for cmove in Directions.values():
@@ -156,10 +159,13 @@ class PlayerAI():
 		self.move = validmoves[random.randrange(0, len(validmoves))]
 		stderr.write("Chose move " + str(self.move) + "\n")
 		
-		# place a bomb if there are blocks that can be destroyed
-		if len(neighbour_blocks) > 0 and str(self.move) != "still":
-			self.bombMove = True
-
+		# if I placed a bomb last move and bomb chaining is off, don't bomb.
+		if (bomb_chain == False) and (self.bombMove == True):
+			self.bombMove = False
+		else:   # place a bomb if there are blocks that can be destroyed
+			if len(neighbour_blocks) > 0 and str(self.move) != "still":
+				self.bombMove = True
+			
 		if self.bombMove: 
 			return self.move.bombaction
 		else: 
