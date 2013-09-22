@@ -130,6 +130,9 @@ class PlayerAI():
 		
 		#turn making bomb chains on or off. False is off.
 		bomb_chain = False
+		
+		#variable used for jank anti-trapping code, False if safe, True if im gonna move into a bomb
+		danger = False
 
 		# find out which directions Bomber can move to.
 		for cmove in Directions.values():
@@ -164,6 +167,10 @@ class PlayerAI():
 						if (bomb[1] == y) and (abs(bomb[0] - x) <= bombs[bomb]['range']) and (timebomb >= self.get_explode_time(bomb,bombs)):
 							bad = True
 							break
+						if ((bomb[1] == y) and (abs(bomb[0] - x) <= bombs[bomb]['range'])) or ((bomb[0] == x) and (abs(bomb[1] - y) <= bombs[bomb]['range'])):
+							danger = True
+						else:
+							danger = False
 					if not (bad or exploding):
 						validmoves.append(cmove)
 			elif (x, y) in self.blocks: 
@@ -191,7 +198,7 @@ class PlayerAI():
 			if len(neighbour_blocks) > 0 and str(self.move) != "still":
 				self.bombMove = True
 			
-		if self.bombMove: 
+		if self.bombMove and danger: 
 			return self.move.bombaction
 		else: 
 			return self.move.action
