@@ -45,7 +45,7 @@ class PlayerAI():
 	
 	def is_deadend(self, pos, map_list):
 		t = sum(a in WALKABLE for a in (map_list[pos[0]][pos[1] + 1],
-		map_list[pos[0] + 1)][pos[1]],
+		map_list[pos[0] + 1][pos[1]],
 		map_list[pos[0] - 1][pos[1]],
 		map_list[pos[0]][pos[1] - 1]))
 		return t<=1
@@ -53,7 +53,7 @@ class PlayerAI():
 	def get_value(self, pos, oldpos, map_list, bombs, powerups, other_index, bombMove):
 		if bombMove and pos == oldpos:
 			return BSTAY
-		t=bombMove * DEAD * is_deadend(pos)
+		t=bombMove * DEAD * self.is_deadend(pos, map_list)
 		if len(bombs):
 			t += BDIST*1.0/min(max(0.1,self.manhattan_distance(pos,bomb)+BTIME*(15-self.get_explode_time(bomb,bombs))+BRANGE*bombs[bomb]['range']) for bomb in bombs)
 		if len(self.blocks):
@@ -227,8 +227,6 @@ class PlayerAI():
 			self.move = max((self.get_value(a[1],my_position, map_list,bombs,powerups,not player_index, self.bombMove),a[0]) for a in validmoves)[1]
 			
 		if self.bombMove and (not danger): 
-			if (not (x % 2 or y % 2)): #if x and y are both even
-				my_position[0] my_position[1]
 			return self.move.bombaction
 		else: 
 			return self.move.action
