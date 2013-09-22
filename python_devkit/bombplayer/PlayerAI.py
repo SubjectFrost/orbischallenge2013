@@ -10,7 +10,7 @@ from Direction import *
 BDIST=-2 # closeness to bomb penalty
 BSTAY=-2 # pentalty for staying in place of bomb
 BRANGE=-1 # range of closest bomb penalty
-BTIME=-1 # time left in closest bomb penalty
+BTIME=-0.1 # time left in closest bomb penalty
 ODIST=-3 # opponent closeness penalty
 OMOM=-1 # opponent momentum penalty
 PDIST=10 # powerup bonus
