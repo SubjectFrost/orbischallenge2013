@@ -26,15 +26,10 @@ class PlayerAI():
 		rnge = bombs[bomb]['range']
 		bombs_new = bombs.copy()
 		bombs_new.pop(bomb)
-		for x in range(-rnge-1,rnge+1):
-			next = (bomb[0]+x,bomb[1])
-			if bombs_new.has_key(next):
-				best = min(best,self.get_explode_time(next,bombs_new))
-		for y in range(-rnge-1,rnge+1):
-			next = (bomb[0],bomb[1]+y)
-			if bombs_new.has_key(next):
-				best = min(best,self.get_explode_time(next,bombs_new))
-		return best
+		t = [best]
+		t += [self.get_explode_time((bomb[0]+x,bomb[1]),bombs_new) for x in range(-rnge-1,rnge+1) if bombs_new.has_key((bomb[0]+x,bomb[1]))]
+		t += [self.get_explode_time((bomb[0],bomb[1]+y),bombs_new) for y in range(-rnge-1,rnge+1) if bombs_new.has_key((bomb[0],bomb[1]+y))]
+		return min(t)
 	
 	def __init__(self):
 		self.blocks = []
