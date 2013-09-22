@@ -69,15 +69,18 @@ class PlayerAI():
 		if len(a):
 			t += BDIST*1.0/min(a)
 #		if len(self.blocks):
-		a = [self.manhattan_distance(pos,block) for block in self.blocks]
+		a = [(self.manhattan_distance(pos,block),self.euc_dist(pos,block)) for block in self.blocks]
 		if len(a):
-			t += BLDIST*1.0/min(a)
+			a = min(a)
+			if a[1] < a[0] + 1:
+				a = float(a[1]) / 1.4
+			t += BLDIST*1.0/a
 #		if len(powerups):
 		a = [(max(0.0001,self.manhattan_distance(pos,powerup)),max(0.0001,self.euc_dist(pos,powerup))) for powerup in powerups if self.path_exists(pos,powerup,map_list)]
 		if len(a):
 			a = min(a)
 			if a[1] < a[0] + 1:
-				a = a[1]
+				a = float(a[1]) / 1.4
 			else:
 				a = a[0]
 			t += PDIST*1.0/a
