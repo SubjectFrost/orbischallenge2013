@@ -19,7 +19,7 @@ PDIST=5 # powerup bonus
 TDIST=-2 # trap closeness penalty
 BLDIST=3 # block closeness bonus
 DEAD=-20
-EUC_CORR=1.4
+EUC_CORR=1.3
 
 class PlayerAI():
 
