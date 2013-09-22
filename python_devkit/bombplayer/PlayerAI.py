@@ -7,14 +7,14 @@ from Enums import *
 from Direction import *
 
 # constants for objective function
-BDIST=-4
-BRANGE=-1
-BTIME=-2
-ODIST=-3
-OMOM=-1
-PDIST=2
-TDIST=-2
-BLDIST=2
+BDIST=-4 # closeness to bomb penalty
+BRANGE=-1 # range of closest bomb penalty
+BTIME=-2 # time left in closest bomb penalty
+ODIST=-3 # opponent closeness penalty
+OMOM=-1 # opponent momentum penalty
+PDIST=2 # powerup trap bonus
+TDIST=-2 # trap closeness penalty
+BLDIST=2 # block closeness bonus
 
 class PlayerAI():
 
