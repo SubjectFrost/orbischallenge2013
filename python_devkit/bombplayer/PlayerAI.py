@@ -7,12 +7,13 @@ from Enums import *
 from Direction import *
 
 # constants for objective function
-BDIST=-4 # closeness to bomb penalty
+BDIST=-5 # closeness to bomb penalty
+BSTAY=-2 # pentalty for staying in place of bomb
 BRANGE=-1 # range of closest bomb penalty
 BTIME=-1 # time left in closest bomb penalty
 ODIST=-3 # opponent closeness penalty
 OMOM=-1 # opponent momentum penalty
-PDIST=3 # powerup bonus
+PDIST=10 # powerup bonus
 TDIST=-2 # trap closeness penalty
 BLDIST=2 # block closeness bonus
 
@@ -43,18 +44,14 @@ class PlayerAI():
 
 	def get_value(self, pos, oldpos, map_list, bombs, powerups, other_index, bombMove):
 		if bombMove and pos == oldpos:
-			return -100000
+			return BSTAY
 		t=0
 		if len(bombs):
 			t += BDIST*1.0/min(max(0.1,self.manhattan_distance(pos,bomb)+BTIME*(15-bombs[bomb]['time_left'])+BRANGE*bombs[bomb]['range']) for bomb in bombs)
 		if len(self.blocks):
 			t += BLDIST*1.0/min(self.manhattan_distance(pos,block) for block in self.blocks)
 		if len(powerups):
-			a = min(self.manhattan_distance(pos,powerup) for powerup in powerups)
-			if not a:
-				t += PDIST
-			else:
-				t += PDIST*1.0/a
+			t += PDIST*1.0/min(max(0.1,self.manhattan_distance(pos,powerup)) for powerup in powerups)
 		return t
 	
 	def __init__(self):
