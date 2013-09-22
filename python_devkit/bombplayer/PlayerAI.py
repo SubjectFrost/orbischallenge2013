@@ -258,7 +258,7 @@ class PlayerAI():
 #		stderr.write("Chose move " + str(self.move) + "\n")
 		
 		
-		if (self.euc_dist(bombers[other_index]['posistion'],bombers[player_index]['position']) <= bombers[player_index]['bomb_range'] + 2):
+		if (self.euc_dist(bombers[not player_index]['position'],bombers[player_index]['position']) <= bombers[player_index]['bomb_range'] + 2):
 			self.bombMove = True
 		
 		# if I placed a bomb last move and bomb chaining is off, don't bomb.
