@@ -8,12 +8,13 @@ from Direction import *
 
 # constants for objective function
 BDIST=-2 # closeness to bomb penalty
+BMULT=2 # multiplier for being in same coord as bomb
 BSTAY=-2 # pentalty for staying in place of bomb
 BRANGE=-0.1 # range of closest bomb penalty
 BTIME=-0.05 # time left in closest bomb penalty
 ODIST=-3 # opponent closeness penalty
 OMOM=-1 # opponent momentum penalty
-PDIST=15 # powerup bonus
+PDIST=5 # powerup bonus
 TDIST=-2 # trap closeness penalty
 BLDIST=4 # block closeness bonus
 DEAD=-20
@@ -60,11 +61,17 @@ class PlayerAI():
 			return BSTAY
 		t=bombMove * DEAD * self.is_deadend(pos, map_list)
 		if len(bombs):
-			t += BDIST*1.0/min(max(0.0001,self.manhattan_distance(pos,bomb)+BTIME*(15-self.get_explode_time(bomb,bombs))+BRANGE*bombs[bomb]['range']) for bomb in bombs)
+			a = [max(0.0001,self.manhattan_distance(pos,bomb)*max(1,BMULT*(pos[0]!=bomb[0] and pos[1]!=bomb[1]))+BTIME*(15-self.get_explode_time(bomb,bombs))+BRANGE*bombs[bomb]['range']) for bomb in bombs if self.path_exists(pos,bomb,map_list)]
+			if len(a):
+				t += BDIST*1.0/min(a)
 		if len(self.blocks):
-			t += BLDIST*1.0/min(self.manhattan_distance(pos,block) for block in self.blocks)
+			a = [self.manhattan_distance(pos,block) for block in self.blocks]
+			if len(a):
+				t += BLDIST*1.0/min(a)
 		if len(powerups):
-			t += PDIST*1.0/min(max(0.0001,self.manhattan_distance(pos,powerup)) for powerup in powerups)
+			a = [max(0.0001,self.manhattan_distance(pos,powerup)) for powerup in powerups if self.path_exists(pos,powerup,map_list)]
+			if len(a):
+				t += PDIST*1.0/min(a)
 		return t
 	
 	def __init__(self):
@@ -263,7 +270,7 @@ class PlayerAI():
 				if (x, y) in visited: 
 					continue
 
-				if map_list[x][y] in walkable: 
+				if map_list[x][y] in WALKABLE: 
 					open_list.append((x, y))
 
 				visited.append((x, y))
